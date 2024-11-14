@@ -17,18 +17,23 @@ package object Comete {
     // Devuelve el punto p en [min, max] tal que f(p) es minimo
     // Suponiendo que f es convexa
     // si max−min < prec, devuelve el punto medio de [min, max]
-
     // Si el intervalo es menor que la precisión deseada, devuelve el punto medio como aproximación
     if (max - min < prec) (min + max) / 2
     else {
-      // Divide el intervalo en tercios para buscar el mínimo en una función convexa
-      val leftThird = min + (max - min) / 3
-      val rightThird = max - (max - min) / 3
+      // Divide el intervalo en 10 partes
+      val intervalSize = (max - min) / 10
+      val points = (0 to 10).map(i => min + i * intervalSize)
 
-      if (f(leftThird) < f(rightThird))
-        min_p(f, min, rightThird, prec) // El mínimo está en el tercio izquierdo
-      else
-        min_p(f, leftThird, max, prec) // El mínimo está en el tercio derecho
+      // Encuentra el punto en el que f es mínimo
+      val minPoint = points.minBy(f)
+      val minIndex = points.indexOf(minPoint)
+
+      // Define los nuevos límites del subintervalo que contiene el punto mínimo
+      val newMin = if (minIndex == 0) min else points(minIndex - 1)
+      val newMax = if (minIndex == 10) max else points(minIndex + 1)
+
+      // Llama recursivamente a min_p en el nuevo intervalo
+      min_p(f, newMin, newMax, prec)
     }
   }
 
