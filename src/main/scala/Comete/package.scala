@@ -37,16 +37,26 @@ package object Comete {
     }
   }
 
+  // Define `rhoCMT_Gen` que toma `alpha` y `beta` (ambos Double) y devuelve una función `PolMeasure`.
   def rhoCMT_Gen(alpha: Double, beta: Double): PolMeasure = {
-    // Dados alpha y beta devuelve la funcion que calcula la medida
-    // comete parametrizada en alpha y beta
 
-    // Si Pi es una distribucion de opiniones y dv es un vector de
-    // valores de distribucion, entonces rhoCMTGen(alpha, beta)(Pi, dv)
-    // es la medida de polarizacion de los agentes de acuerdo a la
-    // medida de polarizacion de comete parametrizada en alpha y beta
-    // con distribucion Pi y valores de distribucion dv
+    // La función resultante recibe una `distribution` (una tupla de listas `pi` y `dv`).
+    distribution =>
+      val (pi, dv) = distribution
 
+      // Función auxiliar `rho_aux` que calcula una métrica de error en base a `p`.
+      def rho_aux(p: Double): Double = {
+        // Combina `pi` y `dv`, aplica ponderación con `alpha` y `beta`, y suma los resultados.
+        pi.zip(dv).map { case (prob, value) =>
+          math.pow(prob, alpha) * math.pow(math.abs(value - p), beta)
+        }.sum
+      }
+
+      // Encuentra el valor `p` en [0.0, 1.0] que minimiza `rho_aux` con precisión de 0.001.
+      val optimalP = min_p(rho_aux, 0.0, 1.0, 0.001)
+
+      // Calcula `rho_aux(optimalP)`, redondea a tres decimales y convierte a Double.
+      BigDecimal(rho_aux(optimalP)).setScale(3, BigDecimal.RoundingMode.HALF_UP).toDouble
   }
 
   def normalizar(m: PolMeasure): PolMeasure = {
