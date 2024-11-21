@@ -44,9 +44,18 @@ package object Opinion {
   }
 
   def showWeightedGraph(swg: SpecificWeightedGraph): IndexedSeq[IndexedSeq[Double]] = {
-
+    // Inicia un bucle externo para recorrer las filas de la matriz.
+    // `swg._2` contiene el número de agentes, que define el tamaño de la matriz.
+    for (i <- 0 until swg._2) yield {
+      // Inicia un bucle interno para recorrer las columnas de la matriz.
+      // Para cada combinación de fila `i` y columna `j`, calcula la influencia entre agentes.
+      for (j <- 0 until swg._2) yield swg._1(i, j)
+      // `swg._1` es la función de influencia, que toma los índices de dos agentes `(i, j)`
+      // y devuelve el peso de la influencia de `i` sobre `j`.
+    }
+    // El resultado es una estructura `IndexedSeq` de `IndexedSeq`, donde cada fila representa
+    // un agente y cada columna en esa fila representa su influencia sobre otros agentes.
   }
-
   def simulate(fu: FunctionUpdate, swg: SpecificWeightedGraph, b0: SpecificBelief, t: Int): IndexedSeq[SpecificBelief] = {
 
   }
