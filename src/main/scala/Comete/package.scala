@@ -59,6 +59,13 @@ package object Comete {
       BigDecimal(rho_aux(optimalP)).setScale(3, BigDecimal.RoundingMode.HALF_UP).toDouble
   }
 
+/**
+  * Calculates the worst-case polarization for a given distribution
+  *
+  * @param y The distribution values
+  * @return The frequency vector representing the worst-case polarization
+  */
+
   def worstCasePolarization(y: DistributionValues): Frequency = {
   val frecuencies = if (y.length > 2) {
     for {
@@ -70,12 +77,22 @@ package object Comete {
   (Vector(0.5) ++ frecuencies ++ Vector(0.5)).toVector
 }
 
+/**
+ * Normalizes a polarization measure
+ *
+ * @param m The polarization measure to be normalized.
+ * @return The normalized polarization measure
+ */
+
   def normalizar(m: PolMeasure): PolMeasure = {
    def normalizedMeasure(distribution: Distribution): Double = {
+    // Se crea una distribucion para el caso con la peor polarizacion
     val worstCaseDistribution = (worstCasePolarization(distribution._2), distribution._2)
+    // Calculo de las medidas y normalizacion
     val normalizedValue = m(distribution) / m(worstCaseDistribution)
+    // Se redondea a tres decimales el resultado y se convierte en un Double
     BigDecimal(normalizedValue).setScale(3, BigDecimal.RoundingMode.HALF_UP).toDouble
     }
-  normalizedMeasure
+    normalizedMeasure
   }
 }
