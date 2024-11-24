@@ -67,8 +67,18 @@ package object Opinion {
     Int => SpecificWeightedGraph
   type FunctionUpdate = (SpecificBelief, SpecificWeightedGraph) => SpecificBelief
   def confBiasUpdate(sb: SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
-
- // }
+    for {
+      belief <- sb
+      influentAgents = (0 until swg._2).filter(j => swg._1(j, sb.indexOf(belief)) > 0)
+      sum = (for {
+        j <- influentAgents
+        beta = 1 - math.abs(sb(j)- belief)
+        influenceGraph = swg._1(j, sb.indexOf(belief))
+        a = beta * influenceGraph * (sb(j) - belief)
+      } yield a).sum
+      nb = belief + sum / influentAgents.length
+    } yield nb
+  }
 
   def showWeightedGraph(swg: SpecificWeightedGraph): IndexedSeq[IndexedSeq[Double]] = {
     // Inicia un bucle externo para recorrer las filas de la matriz.
