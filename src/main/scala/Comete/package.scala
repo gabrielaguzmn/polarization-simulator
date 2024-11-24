@@ -59,9 +59,23 @@ package object Comete {
       BigDecimal(rho_aux(optimalP)).setScale(3, BigDecimal.RoundingMode.HALF_UP).toDouble
   }
 
-  def normalizar(m: PolMeasure): PolMeasure = {
-    // Recibe una medida de polarizacion, y devuelve la
-    // correspondiente medida que la calcula normalizada
+  def worstCasePolarization(y: DistributionValues): Frequency = {
+  val frecuencies = if (y.length > 2) {
+    for {
+      _ <- 1 to (y.length - 2)
+    } yield 0.0
+  } else {
+    Vector.empty[Double]
+  }
+  (Vector(0.5) ++ frecuencies ++ Vector(0.5)).toVector
+}
 
+  def normalizar(m: PolMeasure): PolMeasure = {
+   def normalizedMeasure(distribution: Distribution): Double = {
+    val worstCaseDistribution = (worstCasePolarization(distribution._2), distribution._2)
+    val normalizedValue = m(distribution) / m(worstCaseDistribution)
+    BigDecimal(normalizedValue).setScale(3, BigDecimal.RoundingMode.HALF_UP).toDouble
+    }
+  normalizedMeasure
   }
 }
