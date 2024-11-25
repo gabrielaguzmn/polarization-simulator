@@ -30,7 +30,7 @@ package object Comete {
 
       // Define los nuevos límites del subintervalo que contiene el punto mínimo
       val newMin = if (minIndex == 0) min else points(minIndex - 1)
-      val newMax = if (minIndex == 10) max else points(minIndex + 1)
+      val newMax = if (minIndex == points.size - 1) max else points(minIndex + 1)
 
       // Llama recursivamente a min_p en el nuevo intervalo
       min_p(f, newMin, newMax, prec)
