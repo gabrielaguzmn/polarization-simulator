@@ -27,12 +27,14 @@ package object Opinion {
   // y d: DistributionValues,
   // rho(sb, d) es la polarizacion de los agentes
   // de acuerdo a esa medida
+
+/**
+ * @param specificBelief Vector de creencias (valores entre 0 y 1)
+ * @param distributionValues Valores discretos para la distribución
+ * @return Valor de polarización normalizado entre 0 (mín) y 1 (máx)
+ */
+
   def rho(alpha: Double, beta: Double): AgentsPolMeasure = {
-    /**
-     * @param specificBelief Vector de creencias (valores entre 0 y 1)
-     * @param distributionValues Valores discretos para la distribución
-     * @return Valor de polarización normalizado entre 0 (mín) y 1 (máx)
-     */
 
     (specificBelief: SpecificBelief, distributionValues: DistributionValues) => {
       // Inicializamos el vector de frecuencias con ceros
@@ -60,7 +62,6 @@ package object Opinion {
     }
   }
 
-
   // Tipos para Modelar la evolucion de la opinion en una red
   type WeightedGraph = (Int, Int) => Double
   type SpecificWeightedGraph = (WeightedGraph, Int)
@@ -68,28 +69,38 @@ package object Opinion {
   type FunctionUpdate = (SpecificBelief, SpecificWeightedGraph) => SpecificBelief
 
 /**
- * Updates the specific belief based on the influence of a specific weighted graph
+ * Actualiza la creencia específica basada en la influencia de un grafo ponderado específico.
  *
- * @param sb The specific belief vector
- * @param swg The specific weighted graph, represented as a tuple where the first element is a function
- *            that takes two indices and returns the weight of the edge between them, and the second element
- *            is the number of agents
- * @return The updated specific belief vector
+ * @param sb El vector de creencias específicas.
+ * @param swg El grafo ponderado específico, representado como una tupla donde el primer elemento es una función
+ *            que toma dos índices y devuelve el peso del borde entre ellos, y el segundo elemento
+ *            es el número de agentes.
+ * @return El vector de creencias específicas actualizado.
  */
 
-  def confBiasUpdate(sb: SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
-    for {
-      belief <- sb
-      influentAgents = (0 until swg._2).filter(j => swg._1(j, sb.indexOf(belief)) > 0)
-      sum = (for {
-        j <- influentAgents
-        beta = 1 - math.abs(sb(j)- belief)
-        influenceGraph = swg._1(j, sb.indexOf(belief))
-        a = beta * influenceGraph * (sb(j) - belief)
-      } yield a).sum
-      nb = belief + sum / influentAgents.length
-    } yield nb
-  }
+def confBiasUpdate(sb: SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
+  for {
+    // Itera sobre cada creencia en el vector de creencias específicas
+    belief <- sb
+
+    // Encuentra los agentes influyentes, aquellos con un peso de borde mayor a 0
+    influentAgents = (0 until swg._2).filter(j => swg._1(j, sb.indexOf(belief)) > 0)
+
+    // Calcula la suma de las influencias de los agentes influyentes
+    sum = (for {
+      j <- influentAgents
+      // Calcula el factor beta basado en la diferencia absoluta entre las creencias
+      beta = 1 - math.abs(sb(j) - belief)
+      // Obtiene el peso del grafo de influencia entre los agentes
+      influenceGraph = swg._1(j, sb.indexOf(belief))
+      // Calcula la influencia ajustada
+      a = beta * influenceGraph * (sb(j) - belief)
+    } yield a).sum
+
+    // Calcula la nueva creencia basada en la suma de influencias
+    nb = belief + sum / influentAgents.length
+  } yield nb
+}
 
   def showWeightedGraph(swg: SpecificWeightedGraph): IndexedSeq[IndexedSeq[Double]] = {
     // Inicia un bucle externo para recorrer las filas de la matriz.
@@ -110,15 +121,18 @@ package object Opinion {
   // }
 
   // Versiones paralelas
+
+/**
+ * Versión paralela de la medida de polarización basada en Comete.
+ *
+ * @param specificBelief Vector de creencias (valores entre 0 y 1)
+ * @param distributionValues Valores discretos para la distribución
+ * @return Valor de polarización normalizado entre 0 (mín) y 1 (máx)
+ */
+
   def rhoPar(alpha: Double, beta: Double): AgentsPolMeasure = {
     // rho es la medida de polarizacion de agentes basada
-    /**
-     * Versión paralela de la medida de polarización basada en Comete.
-     *
-     * @param specificBelief Vector de creencias (valores entre 0 y 1)
-     * @param distributionValues Valores discretos para la distribución
-     * @return Valor de polarización normalizado entre 0 (mín) y 1 (máx)
-     */
+  
     (specificBelief: SpecificBelief, distributionValues: DistributionValues) => {
       // Inicializamos el vector de frecuencias con ceros
       val emptyFrequencies = Vector.fill(distributionValues.length)(0.0)

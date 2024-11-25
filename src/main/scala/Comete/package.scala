@@ -60,39 +60,40 @@ package object Comete {
   }
 
 /**
-  * Calculates the worst-case polarization for a given distribution
-  *
-  * @param y The distribution values
-  * @return The frequency vector representing the worst-case polarization
-  */
-
-  def worstCasePolarization(y: DistributionValues): Frequency = {
-  val frecuencies = if (y.length > 2) {
-    for {
-      _ <- 1 to (y.length - 2)
-    } yield 0.0
-  } else {
-    Vector.empty[Double]
-  }
-  (Vector(0.5) ++ frecuencies ++ Vector(0.5)).toVector
-}
-
-/**
- * Normalizes a polarization measure
+ * Normaliza una medida de polarización.
  *
- * @param m The polarization measure to be normalized.
- * @return The normalized polarization measure
+ * @param m La medida de polarización a normalizar.
+ * @return La medida de polarización normalizada.
  */
 
-  def normalizar(m: PolMeasure): PolMeasure = {
-   def normalizedMeasure(distribution: Distribution): Double = {
-    // Se crea una distribucion para el caso con la peor polarizacion
+def normalizar(m: PolMeasure): PolMeasure = {
+  def normalizedMeasure(distribution: Distribution): Double = {
+
+    /**
+     * Calcula la peor polarización posible para una distribución dada.
+     *
+     * @param y Los valores de la distribución.
+     * @return El vector de frecuencias que representa la peor polarización posible.
+     */
+    
+    def worstCasePolarization(y: DistributionValues): Frequency = {
+      val frecuencies = if (y.length > 2) {
+        for {
+          _ <- 1 to (y.length - 2)
+        } yield 0.0
+      } else {
+        Vector.empty[Double]
+      }
+      (Vector(0.5) ++ frecuencies ++ Vector(0.5)).toVector
+    }
+
+    // Se crea una distribución para el caso con la peor polarización
     val worstCaseDistribution = (worstCasePolarization(distribution._2), distribution._2)
-    // Calculo de las medidas y normalizacion
+    // Cálculo de las medidas y normalización
     val normalizedValue = m(distribution) / m(worstCaseDistribution)
     // Se redondea a tres decimales el resultado y se convierte en un Double
     BigDecimal(normalizedValue).setScale(3, BigDecimal.RoundingMode.HALF_UP).toDouble
-    }
-    normalizedMeasure
+  }
+  normalizedMeasure
   }
 }
