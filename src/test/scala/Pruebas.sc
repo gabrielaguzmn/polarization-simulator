@@ -1,4 +1,25 @@
 import Opinion._
+
+val frequencies1 = Vector(0.5, 0.5)
+val distributionValues1 = Vector(0.0, 1.0)
+val distribution1 = (frequencies1, distributionValues1)
+
+val frequencies2 = Vector(0.05, 0.1, 0.15, 0.2, 0.25, 0.25)
+val distributionValues2 = Vector(0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
+val distribution2 = (frequencies2, distributionValues2)
+
+val frequencies3 = Vector(0.7, 0.2, 0.1)
+val distributionValues3 = Vector(0.0, 0.5, 1.0)
+val distribution3 = (frequencies3, distributionValues3)
+
+val frequencies4 = Vector(0.2, 0.2, 0.2, 0.2, 0.2)
+val distributionValues4 = Vector(0.0, 0.25, 0.5, 0.75, 1.0)
+val distribution4 = (frequencies4, distributionValues4)
+
+val frequencies5 = Vector(0.1, 0.4, 0.4, 0.1)
+val distributionValues5 = Vector(0.0, 0.3, 0.7, 1.0)
+val distribution5 = (frequencies5, distributionValues5)
+
 def i1(nags:Int):SpecificWeightedGraph={
   ((i:Int,j:Int) => if (i==j) 1.0
   else if (i<j) 1.0/(j-i).toDouble

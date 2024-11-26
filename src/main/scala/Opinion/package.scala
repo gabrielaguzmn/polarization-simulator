@@ -115,6 +115,7 @@ def confBiasUpdate(sb: SpecificBelief, swg: SpecificWeightedGraph): SpecificBeli
     // El resultado es una estructura `IndexedSeq` de `IndexedSeq`, donde cada fila representa
     // un agente y cada columna en esa fila representa su influencia sobre otros agentes.
   }
+  
   def simulate(fu: FunctionUpdate, swg: SpecificWeightedGraph, b0: SpecificBelief, t: Int): IndexedSeq[SpecificBelief] = {
     // Itera `t` pasos para actualizar las creencias y aplica la funcion de actualizacion
     (0 until t).scanLeft(b0)((currentBelief, _) => fu(currentBelief, swg))
