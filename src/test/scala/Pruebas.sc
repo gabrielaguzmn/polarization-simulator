@@ -38,3 +38,41 @@ val dist1= Vector(0.0,0.25,0.50,0.75,1.0)
 for {
   b <- simulate(confBiasUpdate, i1_10, sbu_10, 2 )
 } yield (b,rho1(b,dist1))
+
+val sb_ext= allExtremeBelief(100)
+val sb_cons = consensusBelief(0.2)(100)
+val sb_unif = uniformBelief(100)
+val sb_triple = allTripleBelief (100)
+val sb_midly = midlyBelief(100)
+
+val rho1 = rho(1.2, 1.2)
+val rho2 = rho(2.0 ,1.0)
+val dist1 = Vector(0.0, 0.25, 0.50, 0.75, 1.0)
+val dist2 = Vector(0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
+
+rho1(sb_ext, dist1)
+rho2(sb_ext, dist1)
+rho1(sb_ext, dist2)
+rho2(sb_ext, dist2)
+
+rho1(sb_cons, dist1)
+rho2(sb_cons, dist1)
+rho1(sb_cons, dist2)
+rho2(sb_cons, dist2)
+
+rho1(sb_triple, dist1)
+rho2(sb_triple, dist1)
+rho1(sb_triple, dist2)
+rho2(sb_triple, dist2)
+
+rho1(sb_midly, dist1)
+rho2(sb_midly, dist1)
+rho1(sb_midly, dist2)
+rho2(sb_midly, dist2)
+
+// Definimos un grafo de pesos simple (WeightedGraph)
+val simpleWeightedGraph: WeightedGraph = (i, j) => {
+  if (i == j) 0.0 // Sin auto-influencia
+  else if ((i + j) % 2 == 0) 0.5 // Influencia moderada entre agentes pares
+  else 0.2 // Influencia baja entre agentes impares
+}
