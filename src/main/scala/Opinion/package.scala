@@ -209,13 +209,16 @@ package object Opinion {
 
   def confBiasUpdatePar(sb: SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
     sb.par.map { belief =>
+      val i = sb.indexOf(belief)
       // Encuentra los agentes influyentes en paralelo
       val influentAgents = (0 until sb.length).par.filter(j => swg._1(j, sb.indexOf(belief)) > 0)
 
-      // Calcula la suma de las influencias en paralelo
+      // Utiliza el paralelismo de tareas para calcular las influencias
       val sum = influentAgents.map { j =>
-        val beta = 1 - math.abs(sb(j) - belief) // Factor de ajuste
-        val influenceGraph = swg._1(j, sb.indexOf(belief)) // Peso del grafo
+        val (beta, influenceGraph) = parallel(
+          1 - math.abs(sb(j) - belief), // Calcular beta en paralelo
+          swg._1(j, i) // Obtener peso del grafo en paralelo
+        )
         beta * influenceGraph * (sb(j) - belief) // Influencia ajustada
       }.sum
 
