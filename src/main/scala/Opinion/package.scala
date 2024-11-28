@@ -109,9 +109,9 @@ package object Opinion {
     for {
       // Itera sobre cada creencia en el vector de creencias específicas
       belief <- sb
-
+      i = sb.indexOf(belief)
       // Encuentra los agentes influyentes, aquellos con un peso de borde mayor a 0
-      influentAgents = (0 until swg._2).filter(j => swg._1(j, sb.indexOf(belief)) > 0)
+      influentAgents = (0 until sb.length).filter(j => swg._1(j, i) > 0)
 
       // Calcula la suma de las influencias de los agentes influyentes
       sum = (for {
@@ -119,13 +119,13 @@ package object Opinion {
         // Calcula el factor beta basado en la diferencia absoluta entre las creencias
         beta = 1 - math.abs(sb(j) - belief)
         // Obtiene el peso del grafo de influencia entre los agentes
-        influenceGraph = swg._1(j, sb.indexOf(belief))
+        influenceGraph = swg._1(j, i)
         // Calcula la influencia ajustada
         a = beta * influenceGraph * (sb(j) - belief)
       } yield a).sum
 
       // Calcula la nueva creencia basada en la suma de influencias
-      nb = belief + sum / influentAgents.length
+      nb =  belief + sum / influentAgents.size
     } yield nb
   }
 
@@ -210,7 +210,7 @@ package object Opinion {
   def confBiasUpdatePar(sb: SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
     sb.par.map { belief =>
       // Encuentra los agentes influyentes en paralelo
-      val influentAgents = (0 until swg._2).par.filter(j => swg._1(j, sb.indexOf(belief)) > 0)
+      val influentAgents = (0 until sb.length).par.filter(j => swg._1(j, sb.indexOf(belief)) > 0)
 
       // Calcula la suma de las influencias en paralelo
       val sum = influentAgents.map { j =>
