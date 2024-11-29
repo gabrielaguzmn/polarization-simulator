@@ -36,6 +36,14 @@ package object Opinion {
    *         (`DistributionValues`) y devuelve la polarización normalizada.
    */
 
+
+  /**
+   * @param specificBelief Vector de creencias
+   * @param distributionValues Valores discretos para la distribución
+   * @return Una función que toma una creencia específica (`SpecificBelief`) y valores de distribución
+   *         (`DistributionValues`) y devuelve la polarización normalizada.
+   */
+
   def rho(alpha: Double, beta: Double): AgentsPolMeasure = {
     (specificBelief: SpecificBelief, distributionValues: DistributionValues) => {
       // Número total de agentes en la red
@@ -211,7 +219,7 @@ package object Opinion {
     sb.par.map { belief =>
       val i = sb.indexOf(belief)
       // Encuentra los agentes influyentes en paralelo
-      val influentAgents = (0 until sb.length).par.filter(j => swg._1(j, sb.indexOf(belief)) > 0)
+      val influentAgents = (0 until sb.length).par.filter(j => swg._1(j, i) > 0)
 
       // Utiliza el paralelismo de tareas para calcular las influencias
       val sum = influentAgents.map { j =>
