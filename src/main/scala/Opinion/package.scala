@@ -36,14 +36,6 @@ package object Opinion {
    *         (`DistributionValues`) y devuelve la polarización normalizada.
    */
 
-
-  /**
-   * @param specificBelief Vector de creencias
-   * @param distributionValues Valores discretos para la distribución
-   * @return Una función que toma una creencia específica (`SpecificBelief`) y valores de distribución
-   *         (`DistributionValues`) y devuelve la polarización normalizada.
-   */
-
   def rho(alpha: Double, beta: Double): AgentsPolMeasure = {
     (specificBelief: SpecificBelief, distributionValues: DistributionValues) => {
       // Número total de agentes en la red
@@ -137,6 +129,16 @@ package object Opinion {
     } yield nb
   }
 
+/**
+ * Muestra el grafo ponderado específico como una matriz.
+ *
+ * @param swg El grafo ponderado específico, representado como una tupla donde el primer elemento es una función
+ *            que toma dos índices y devuelve el peso del borde entre ellos, y el segundo elemento
+ *            es el número de agentes.
+ * @return Una estructura `IndexedSeq` de `IndexedSeq`, donde cada fila representa un agente y cada columna en esa fila
+ *         representa su influencia sobre otros agentes.
+ */
+
   def showWeightedGraph(swg: SpecificWeightedGraph): IndexedSeq[IndexedSeq[Double]] = {
     // Inicia un bucle externo para recorrer las filas de la matriz.
     // `swg._2` contiene el número de agentes, que define el tamaño de la matriz.
@@ -150,6 +152,18 @@ package object Opinion {
     // El resultado es una estructura `IndexedSeq` de `IndexedSeq`, donde cada fila representa
     // un agente y cada columna en esa fila representa su influencia sobre otros agentes.
   }
+
+/**
+ * Simula la evolución de las creencias en una red de agentes durante `t` pasos.
+ *
+ * @param fu La función de actualización que se aplica en cada paso.
+ * @param swg El grafo ponderado específico, representado como una tupla donde el primer elemento es una función
+ *            que toma dos índices y devuelve el peso del borde entre ellos, y el segundo elemento
+ *            es el número de agentes.
+ * @param b0 El vector de creencias inicial.
+ * @param t El número de pasos de tiempo para la simulación.
+ * @return Una secuencia de vectores de creencias, uno por cada paso de tiempo.
+ */
 
   def simulate(fu: FunctionUpdate, swg: SpecificWeightedGraph, b0: SpecificBelief, t: Int): IndexedSeq[SpecificBelief] = {
     // Itera `t` pasos para actualizar las creencias y aplica la funcion de actualizacion
@@ -214,6 +228,16 @@ package object Opinion {
       normalizarAux((frequency, distributionValues))
     }
   }
+
+/**
+ * Actualiza la creencia específica basada en la influencia de un grafo ponderado específico de manera paralela.
+ *
+ * @param sb El vector de creencias específicas.
+ * @param swg El grafo ponderado específico, representado como una tupla donde el primer elemento es una función
+ *            que toma dos índices y devuelve el peso del borde entre ellos, y el segundo elemento
+ *            es el número de agentes.
+ * @return El vector de creencias específicas actualizado.
+ */
 
   def confBiasUpdatePar(sb: SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
     sb.par.map { belief =>

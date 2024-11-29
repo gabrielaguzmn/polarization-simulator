@@ -10,8 +10,18 @@ package object Comete {
   // (Pi, dv) es una distribucion si pi es una Frecuencia
   // y dv son los valor es de distribucion y pi y dv son
   // de la misma longitud
-
   type PolMeasure = Distribution => Double
+
+/**
+ * Devuelve el punto p en [min, max] tal que f(p) es mínimo, suponiendo que f es convexa.
+ * Si el intervalo es menor que la precisión deseada, devuelve el punto medio como aproximación.
+ *
+ * @param f La función convexa a minimizar.
+ * @param min El límite inferior del intervalo.
+ * @param max El límite superior del intervalo.
+ * @param prec La precisión deseada.
+ * @return El punto p en [min, max] tal que f(p) es mínimo.
+ */
 
   def min_p(f: Double => Double, min: Double, max: Double, prec: Double): Double = {
     // Devuelve el punto p en [min, max] tal que f(p) es minimo
@@ -37,7 +47,14 @@ package object Comete {
     }
   }
 
-  // Define `rhoCMT_Gen` que toma `alpha` y `beta` (ambos Double) y devuelve una función `PolMeasure`.
+/**
+ * Define `rhoCMT_Gen` que toma `alpha` y `beta` (ambos Double) y devuelve una función `PolMeasure`.
+ *
+ * @param alpha Parámetro que controla la ponderación de las probabilidades.
+ * @param beta Parámetro que controla la ponderación de las diferencias absolutas.
+ * @return Una función `PolMeasure` que calcula la medida de polarización basada en Comete.
+ */
+
   def rhoCMT_Gen(alpha: Double, beta: Double): PolMeasure = {
 
     // La función resultante recibe una `distribution` (una tupla de listas `pi` y `dv`).

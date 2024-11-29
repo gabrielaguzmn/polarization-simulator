@@ -49,13 +49,6 @@ showWeightedGraph(i2_25)
 showWeightedGraph(i1_50)
 showWeightedGraph(i2_100)
 
-val i1_10=i1(10)
-val sbu_10= uniformBelief(10)
-val dist1= Vector(0.0,0.25,0.50,0.75,1.0)
-for {
-  b <- simulate(confBiasUpdate, i1_10, sbu_10, 2 )
-} yield (b,rho1(b,dist1))
-
 val sb_ext= allExtremeBelief(100)
 val sb_cons = consensusBelief(0.2)(100)
 val sb_unif = uniformBelief(100)
@@ -346,3 +339,22 @@ val evolSec_5 = for {
     "simulacion_secuencial_5_" ++ i.toString ++ "-" ++ sbms_5(i).length.toString
   )
 }
+
+// Comparacion versiones secuenciales contra paralelas
+
+val polSec = rho(1.2, 1.2)
+val polPar = rhoPar(1.2, 1.2)
+
+val i132768 = i1(32768)
+val i232768 = i2(32768)
+
+val likert5 = Vector(0.0, 0.25, 0.5, 0.75, 1.0)
+
+val sbms = for {
+  n <- 2 until 13
+  nags = math.pow(2, n).toInt
+} yield midlyBelief(nags)
+
+println(compararMedidasPol(sbms, likert5, polSec, polPar))
+
+println(compararFuncionesAct(sbms, i232768, confBiasUpdate, confBiasUpdatePar))
