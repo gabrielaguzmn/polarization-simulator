@@ -31,7 +31,7 @@ El paquete `Comete` incluye las siguientes funciones:
 Es indispensable que para algunas de las pruebas en el archivo se bajen los paquetes Benchmark y common.
 Además, use una estructura similar a la siguiente para crear su archivo build.sbt:
 
-`
+```
 ThisBuild / version := "0.1.0-SNAPSHOT"
 
 ThisBuild / scalaVersion := "2.13.15"
@@ -50,7 +50,7 @@ libraryDependencies ++= Seq(
   "org.scalameta" %% "munit" % "0.7.26" % Test,
   "org.plotly-scala" %% "plotly-render" % "0.8.1"
 )
-`
+```
 
 Para ejecutar las pruebas definidas en el archivo `Pruebas.sc`, sigue estos pasos:
 
