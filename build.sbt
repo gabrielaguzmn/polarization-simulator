@@ -1,10 +1,10 @@
 ThisBuild / version := "0.1.0-SNAPSHOT"
 
-ThisBuild / scalaVersion := "2.13.10"
+ThisBuild / scalaVersion := "2.13.15"
 
 lazy val root = (project in file("."))
   .settings(
-    name := "Simulador de poralizacion en redes"
+    name := "Simulador de polarizacion en redes"
   )
 
 scalacOptions ++= Seq("-deprecation")
